@@ -19,7 +19,6 @@
 require 'chef/knife'
 require 'chef/knife/data_bag_secret_options'
 require 'erubis'
-require 'tmpdir'
 require 'chef/knife/bootstrap/chef_vault_handler'
 require 'chef/knife/bootstrap/client_builder'
 
@@ -365,13 +364,6 @@ class Chef
 
         command
       end
-
-      private
-
-      def node_name
-        config[:chef_node_name]
-      end
-
     end
   end
 end
