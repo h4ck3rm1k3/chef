@@ -36,6 +36,54 @@ class Chef
           @ui           = ui
         end
 
+        def update_vault_list
+          return unless vault_list || vault_file
+
+          ui.info("Updating Chef Vault, waiting for client to be searchable..") while wait_for_client
+
+          vault_json.each do |vault, item|
+            if item.is_a?(Array)
+              item.each do |i|
+                update_vault(vault, i)
+              end
+            else
+              update_vault(vault, item)
+            end
+          end
+        end
+
+        private
+
+        def node_name
+          knife_config[:chef_node_name]
+        end
+
+        def vault_list
+          knife_config[:vault_list]
+        end
+
+        def vault_file
+          knife_config[:vault_file]
+        end
+
+        def vault_json
+          @vault_json ||=
+            begin
+              json = vault_list ? vault_list : File.read(vault_file)
+              Chef::JSONCompat.from_json(json)
+            end
+        end
+
+        def update_vault(vault, item)
+          vault_item = ChefVault::Item.load(vault, item)
+          vault_item.clients("name:#{node_name}")
+          vault_item.save
+        end
+
+        def wait_for_client
+          sleep 1
+          !Chef::Search::Query.new.search(:client, "name:#{node_name}")[0]
+        end
       end
     end
   end

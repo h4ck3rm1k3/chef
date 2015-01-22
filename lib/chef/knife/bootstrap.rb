@@ -28,17 +28,12 @@ class Chef
     class Bootstrap < Knife
       include DataBagSecretOptions
 
-      attr_reader :client_path
-
       attr_accessor :client_builder
       attr_accessor :chef_vault_handler
 
       deps do
         require 'chef/knife/core/bootstrap_context'
         require 'chef/json_compat'
-        require 'chef/api_client/registration'
-        require 'chef/api_client'
-        require 'chef/node'
         require 'tempfile'
         require 'highline'
         require 'net/ssh'
@@ -293,23 +288,6 @@ class Chef
         Erubis::Eruby.new(template).evaluate(context)
       end
 
-      def node_name
-        config[:chef_node_name]
-      end
-
-      def vault_json
-        @vault_json ||=
-          begin
-            json = config[:vault_list] ? config[:vault_list] : File.read(config[:vault_file])
-            Chef::JSONCompat.from_json(json)
-          end
-      end
-
-      def wait_for_client
-        sleep 1
-        !Chef::Search::Query.new.search(:client, "name:#{node_name}")[0]
-      end
-
       def run
         validate_name_args!
 
@@ -320,17 +298,14 @@ class Chef
         if config[:vault_list] || config[:vault_file] || !File.exist?(File.expand_path(Chef::Config[:validation_key]))
           client_builder.register_client_and_node
 
-          if config[:vault_list] || config[:vault_file]
-            ui.info("Waiting for client to be searchable..") while wait_for_client
-            update_vault_list(vault_json)
-          end
+          chef_vault_handler.update_vault_list
 
           # FIXME: should probably rename this or something since its internal to handing off to the
           # bootstrap templates for rendering
-          config[:client_pem] = client_path
+          config[:client_pem] = client_builder.client_path
         else
           ui.info("Doing old-style registration with a validation key...")
-          ui.info("Please simply delete your validation key in order to use your user credentials instead")
+          ui.info("Delete your validation key in order to use your user credentials instead")
           ui.info("")
         end
 
@@ -393,31 +368,10 @@ class Chef
 
       private
 
-      def update_vault_list(vault_list)
-        vault_list.each do |vault, item|
-          if item.is_a?(Array)
-            item.each do |i|
-              update_vault(vault, i)
-            end
-          else
-            update_vault(vault, item)
-          end
-        end
+      def node_name
+        config[:chef_node_name]
       end
 
-      def update_vault(vault, item)
-        begin
-          vault_item = ChefVault::Item.load(vault, item)
-          vault_item.clients("name:#{node_name}")
-          vault_item.save
-        rescue ChefVault::Exceptions::KeysNotFound,
-          ChefVault::Exceptions::ItemNotFound
-
-          raise ChefVault::Exceptions::ItemNotFound,
-            "#{vault}/#{item} does not exist, "\
-            "you might want to delete the node before retrying."
-        end
-      end
     end
   end
 end
