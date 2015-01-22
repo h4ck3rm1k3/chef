@@ -510,6 +510,11 @@ describe Chef::Knife::Bootstrap do
   end
 
   describe "when running the bootstrap" do
+    before do
+      # this tests runs the old code path where we have a validation key, so we need to pass that check
+      expect(File).to receive(:exist?).with("/etc/chef/validation.pem").and_return(true)
+    end
+
     let(:knife_ssh) do
       knife.name_args = ["foo.example.com"]
       knife.config[:ssh_user]      = "rooty"
