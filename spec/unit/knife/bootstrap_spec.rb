@@ -512,7 +512,7 @@ describe Chef::Knife::Bootstrap do
   describe "when running the bootstrap" do
     before do
       # this tests runs the old code path where we have a validation key, so we need to pass that check
-      expect(File).to receive(:exist?).with("/etc/chef/validation.pem").and_return(true)
+      allow(File).to receive(:exist?).with(File.expand_path(Chef::Config[:validation_key])).and_return(true)
     end
 
     let(:knife_ssh) do

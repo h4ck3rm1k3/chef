@@ -297,7 +297,7 @@ class Chef
         if config[:vault_list] || config[:vault_file] || !File.exist?(File.expand_path(Chef::Config[:validation_key]))
           client_builder.run
 
-          chef_vault_handler.run
+          chef_vault_handler.run(node_name: config[:chef_node_name])
 
           # FIXME: should probably rename this or something since its internal to handing off to the
           # bootstrap templates for rendering
