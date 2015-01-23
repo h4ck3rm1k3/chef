@@ -36,10 +36,15 @@ class Chef
           @ui           = ui
         end
 
-        def update_vault_list
+        def run
           return unless vault_list || vault_file
 
           ui.info("Updating Chef Vault, waiting for client to be searchable..") while wait_for_client
+
+          update_vault_list
+        end
+
+        def update_vault_list
 
           vault_json.each do |vault, item|
             if item.is_a?(Array)

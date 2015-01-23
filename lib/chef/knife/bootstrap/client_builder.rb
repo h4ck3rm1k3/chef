@@ -37,7 +37,7 @@ class Chef
           @ui           = ui
         end
 
-        def register_client_and_node
+        def run
           sanity_check
 
           ui.info("Creating new client for #{node_name}")
@@ -47,6 +47,15 @@ class Chef
           ui.info("Creating new node for #{node_name}")
 
           create_node!
+        end
+
+        def client_path
+          @client_path ||=
+            begin
+              # use an ivar to hold onto the reference so it doesn't get GC'd
+              @tmpdir = Dir.mktmpdir
+              File.join(@tmpdir, "#{node_name}.pem")
+            end
         end
 
         private
@@ -104,12 +113,12 @@ class Chef
 
         def sanity_check
           if resource_exists?("nodes/#{node_name}")
-            ui.confirm("Node #{node_name} exists, overwrite it?")
+            ui.confirm("Node #{node_name} exists, overwrite it")
             # Must delete it as the client created later will not have perms to write it
             rest.delete("nodes/#{node_name}")
           end
           if resource_exists?("clients/#{node_name}")
-            ui.confirm("Client #{node_name} exists, overwrite it?")
+            ui.confirm("Client #{node_name} exists, overwrite it")
             rest.delete("clients/#{node_name}")
           end
         end
@@ -131,15 +140,6 @@ class Chef
             rescue Net::HTTPServerException => e
               raise unless e.response.code == "404"
               false
-            end
-        end
-
-        def client_path
-          @client_path ||=
-            begin
-              # use an ivar to hold onto the reference so it doesn't get GC'd
-              @tmpdir = Dir.mktmpdir
-              File.join(@tmpdir, "#{node_name}.pem")
             end
         end
 

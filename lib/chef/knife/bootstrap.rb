@@ -295,9 +295,9 @@ class Chef
         # chef-vault integration must use the new client-side hawtness, otherwise to use the
         # new client-side hawtness, just delete your validation key.
         if config[:vault_list] || config[:vault_file] || !File.exist?(File.expand_path(Chef::Config[:validation_key]))
-          client_builder.register_client_and_node
+          client_builder.run
 
-          chef_vault_handler.update_vault_list
+          chef_vault_handler.run
 
           # FIXME: should probably rename this or something since its internal to handing off to the
           # bootstrap templates for rendering
