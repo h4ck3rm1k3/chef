@@ -217,7 +217,6 @@ class Chef
           ui: ui,
         )
         @chef_vault_handler = Chef::Knife::Bootstrap::ChefVaultHandler.new(
-          chef_config: Chef::Config,
           knife_config: config,
           ui: ui
         )
