@@ -278,12 +278,23 @@ class Chef
         template_file
       end
 
+      def secret
+        @secret ||= encryption_secret_provided_ignore_encrypt_flag? ? read_secret : nil
+      end
+
+      def bootstrap_context
+        @bootstrap_context ||= Knife::Core::BootstrapContext.new(
+          config,
+          config[:run_list],
+          Chef::Config,
+          secret
+        )
+      end
+
       def render_template
         template_file = find_template
         template = IO.read(template_file).chomp
-        secret = encryption_secret_provided_ignore_encrypt_flag? ? read_secret : nil
-        context = Knife::Core::BootstrapContext.new(config, config[:run_list], Chef::Config, secret)
-        Erubis::Eruby.new(template).evaluate(context)
+        Erubis::Eruby.new(template).evaluate(bootstrap_context)
       end
 
       def run
@@ -298,9 +309,7 @@ class Chef
 
           chef_vault_handler.run(node_name: config[:chef_node_name])
 
-          # FIXME: should probably rename this or something since its internal to handing off to the
-          # bootstrap templates for rendering
-          config[:client_pem] = client_builder.client_path
+          bootstrap_context.client_pem = client_builder.client_path
         else
           ui.info("Doing old-style registration with a validation key...")
           ui.info("Delete your validation key in order to use your user credentials instead")
