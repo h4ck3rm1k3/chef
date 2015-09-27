@@ -99,7 +99,9 @@ module IntegrationSupport
 
   def cwd(relative_path)
     @old_cwd = Dir.pwd
-    Dir.chdir(path_to(relative_path))
+    dir = path_to(relative_path)
+    Chef::Log.debug("going to chdir to #{dir}")
+    Dir.chdir(dir)
   end
 
   RSpec.shared_context "with a chef repo" do
@@ -127,6 +129,7 @@ module IntegrationSupport
           @repository_dir = nil
         end
       end
+      Chef::Log.debug("going to chdir to #{old_cwd}") if @old_cwd
       Dir.chdir(@old_cwd) if @old_cwd
     end
 

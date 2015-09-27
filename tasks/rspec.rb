@@ -28,6 +28,7 @@ begin
 
   desc "Run specs for Chef's Components"
   task :component_specs do
+    Chef::Log.debug("going to chdir to chef-config")
     Dir.chdir("chef-config") do
       Bundler.with_clean_env do
         sh("bundle install --local")

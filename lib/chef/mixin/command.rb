@@ -118,7 +118,7 @@ class Chef
         unless ::File.directory?(args[:cwd])
           raise Chef::Exceptions::Exec, "#{args[:cwd]} does not exist or is not a directory"
         end
-
+        Chef::Log.debug("going to chdir to #{args[:cwd]}")
         Dir.chdir(args[:cwd]) do
           if args[:timeout]
             begin
@@ -182,6 +182,7 @@ class Chef
         unless File.directory?(dir)
           raise Chef::Exceptions::Exec, "#{dir} does not exist or is not a directory"
         end
+        Chef::Log.debug("going to chdir to #{dir}")
         Dir.chdir(dir) do
           block.call
         end

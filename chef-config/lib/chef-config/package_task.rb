@@ -109,7 +109,9 @@ module ChefConfig
 
       desc 'Build Gems of component dependencies'
       task :package_components do
+
         component_full_paths.each do |component_path|
+          Chef::Log.debug("going to chdir to #{component_path}")
           Dir.chdir(component_path) do
             sh 'rake package'
           end
@@ -121,6 +123,7 @@ module ChefConfig
       desc 'Build and install component dependencies'
       task :install_components => :package_components do
         component_full_paths.each do |component_path|
+          Chef::Log.debug("going to chdir to #{component_path}")
           Dir.chdir(component_path) do
             sh 'rake install'
           end
@@ -132,6 +135,7 @@ module ChefConfig
       desc 'Clean up builds of component dependencies'
       task :clobber_component_packages do
         component_full_paths.each do |component_path|
+          Chef::Log.debug("going to chdir to #{component_path}")
           Dir.chdir(component_path) do
             sh 'rake clobber_package'
           end
@@ -143,6 +147,7 @@ module ChefConfig
       desc 'Update the version number for component dependencies'
       task :update_components_versions do
         component_full_paths.each do |component_path|
+          Chef::Log.debug("going to chdir to #{component_path}")
           Dir.chdir(component_path) do
             sh 'rake version'
           end

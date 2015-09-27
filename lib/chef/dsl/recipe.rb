@@ -168,6 +168,7 @@ class Chef
         begin
           super
         rescue NoMethodError
+          puts "Methods", methods.sort
           raise NoMethodError, "No resource or method named `#{method_symbol}' for #{describe_self_for_error}"
         rescue NameError
           raise NameError, "No resource, method, or local variable named `#{method_symbol}' for #{describe_self_for_error}"

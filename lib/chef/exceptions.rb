@@ -68,6 +68,7 @@ class Chef
     class Mount < RuntimeError; end
     class PrivateKeyMissing < RuntimeError; end
     class CannotWritePrivateKey < RuntimeError; end
+    class CannotWriteDirectory < RuntimeError; end
     class RoleNotFound < RuntimeError; end
     class DuplicateRole < RuntimeError; end
     class ValidationFailed < ArgumentError; end
