@@ -68,7 +68,7 @@ module ChefConfig
 
     default(:config_dir) do
       if config_file
-        PathHelper.dirname(config_file)
+        PathHelper.dirname(PathHelper.canonical_path(config_file, false))
       else
         PathHelper.join(user_home, ".chef", "")
       end
@@ -688,6 +688,14 @@ module ChefConfig
       # Set `watchdog_timeout` to the number of seconds to wait for a chef-client run
       # to finish
       default :watchdog_timeout, 2 * (60 * 60) # 2 hours
+    end
+
+    # Add an empty and non-strict config_context for chefdk. This lets the user
+    # have code like `chefdk.generator_cookbook "/path/to/cookbook"` in their
+    # config.rb, and it will be ignored by tools like knife and ohai. ChefDK
+    # itself can define the config options it accepts and enable strict mode,
+    # and that will only apply when running `chef` commands.
+    config_context :chefdk do
     end
 
     # Chef requires an English-language UTF-8 locale to function properly.  We attempt
