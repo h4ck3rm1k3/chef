@@ -56,6 +56,8 @@ class Chef
       resource.source_line = created_at
       resource.declared_type = type
 
+      Chef::Log.debug("build: created_at:#{created_at} type:#{type}")
+
       # If we have a resource like this one, we want to steal its state
       # This behavior is very counter-intuitive and should be removed.
       # See CHEF-3694, https://tickets.opscode.com/browse/CHEF-3694
