@@ -101,6 +101,7 @@ class Chef
 
       def merge_updates_from(cookbook_name, version)
         branch = "chef-vendor-#{cookbook_name}"
+        Chef::Log.debug("going to chdir to #{repo_path}")
         Dir.chdir(repo_path) do
           if system("git merge #{branch}")
             ui.info("Cookbook #{cookbook_name} version #{version} successfully installed")

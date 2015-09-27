@@ -37,6 +37,8 @@ module ChefConfig
     #
     # +filename+ is used for context in stacktraces, but doesn't need to be the name of an actual file.
     def self.from_string(string, filename)
+      ChefConfig.logger.debug "from string filename: #{filename}"
+      ChefConfig.logger.debug "from string #{string}"
       self.instance_eval(string, filename, 1)
     end
 
@@ -67,8 +69,21 @@ module ChefConfig
     configurable(:config_file)
 
     default(:config_dir) do
+      ChefConfig.logger.debug "Config file #{config_file}"
       if config_file
-        PathHelper.dirname(PathHelper.canonical_path(config_file, false))
+        f = File.expand_path(config_file)
+        ChefConfig.logger.debug "Abs file  #{f}"
+        c = PathHelper.canonical_path(f, false)
+        ChefConfig.logger.debug "Canon file  #{c}"
+        d = PathHelper.dirname(c)
+        ChefConfig.logger.debug "Config file dir #{d}"
+
+        if (!File.exists?(c) || !File.writable?(c))
+          puts caller
+          raise Chef::Exceptions::CannotWriteDirectory, "I cannot write to #{c} - check permissions?"
+        end
+
+        d
       else
         PathHelper.join(user_home, ".chef", "")
       end
@@ -272,6 +287,7 @@ module ChefConfig
     default :force_logger, false
 
     default :http_retry_count, 5
+    default :root_dir, "/"
     default :http_retry_delay, 5
     default :interval, nil
     default :once, nil

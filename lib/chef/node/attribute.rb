@@ -465,6 +465,15 @@ class Chef
            if key?(symbol)
              self[symbol]
            else
+             puts "Looking for `#{symbol}' in attributes:"
+#             puts self.attributes.sort
+ #            puts "Looking for `#{symbol}' in methods:"
+             puts self.methods.sort
+
+             #self.each_attribute {|attr|
+               #puts "Attribute", attr
+             #}
+             
              raise NoMethodError, "Undefined method or attribute `#{symbol}' on `node'"
            end
          elsif symbol.to_s =~ /=$/
