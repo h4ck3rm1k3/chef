@@ -311,6 +311,7 @@ class Chef
     def loaded_recipe(cookbook, recipe)
       fully_qualified_recipe = "#{cookbook}::#{recipe}"
 
+      puts "recipes", Array(self[:recipes])
       automatic_attrs[:recipes] << fully_qualified_recipe unless Array(self[:recipes]).include?(fully_qualified_recipe)
     end
 

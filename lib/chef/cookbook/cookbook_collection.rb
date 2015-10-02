@@ -34,6 +34,8 @@ class Chef
     # The input is a mapping of cookbook name to CookbookVersion objects. We
     # simply extract them
     def initialize(cookbook_versions={})
+      #puts "Hash",to_hash()
+      #puts "cookbook_versions",cookbook_versions
       super() do |hash, key|
         raise Chef::Exceptions::CookbookNotFound, "Cookbook #{key} not found. " <<
           "If you're loading #{key} from another cookbook, make sure you configure the dependency in your metadata"

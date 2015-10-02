@@ -46,6 +46,7 @@ class Chef
     # Determine the appropriate provider for the given resource, then
     # execute it.
     def run_action(resource, action, notification_type=nil, notifying_resource=nil)
+#      Chef::Log.debug "runaction #{action}"
       resource.run_action(action, notification_type, notifying_resource)
 
       # Execute any immediate and queue up any delayed notifications
@@ -71,8 +72,10 @@ class Chef
     # Iterates over the +resource_collection+ in the +run_context+ calling
     # +run_action+ for each resource in turn.
     def converge
+#      p run_context.resource_collection
       # Resolve all lazy/forward references in notifications
       run_context.resource_collection.each do |resource|
+#        Chef::Log.debug "resource #{e}"
         resource.resolve_notification_references
       end
 
@@ -83,6 +86,7 @@ class Chef
 
     rescue Exception => e
       Chef::Log.info "Running queued delayed notifications before re-raising exception"
+#      Chef::Log.debug "exception #{e}"
       run_delayed_notifications(e)
     else
       run_delayed_notifications(nil)
@@ -96,6 +100,7 @@ class Chef
       collected_failures = Exceptions::MultipleFailures.new
       collected_failures.client_run_failure(error) unless error.nil?
       delayed_actions.each do |notification|
+#        Chef::Log.debug "Actions #{notification}"
         result = run_delayed_notification(notification)
         if result.kind_of?(Exception)
           collected_failures.notification_failure(result)

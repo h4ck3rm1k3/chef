@@ -159,6 +159,8 @@ class Chef
         RunListExpansionFromDisk.new(environment, @run_list_items)
       when 'server'
         RunListExpansionFromAPI.new(environment, @run_list_items, opts[:rest])
+      else
+            raise "unknown data source: #{data_source}"
       end
     end
 

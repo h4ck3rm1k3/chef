@@ -274,6 +274,8 @@ class Chef
       # Yields the name, as a symbol, of each cookbook depended on by
       # +cookbook_name+ in lexical sort order.
       def each_cookbook_dep(cookbook_name, &block)
+#        p cookbook_collection
+#        p cookbook_name
         cookbook = cookbook_collection[cookbook_name]
         cookbook.metadata.dependencies.keys.sort.map{|x| x.to_sym}.each(&block)
       end

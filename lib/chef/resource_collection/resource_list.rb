@@ -80,6 +80,7 @@ class Chef
         @iterator = ResourceCollection::StepableIterator.for_collection(@resources)
         @iterator.each_with_index do |resource, idx|
           @insert_after_idx = idx
+#          Chef::Log.debug "Resource #{resource}"
           yield resource
         end
       end

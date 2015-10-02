@@ -43,3 +43,13 @@ Vagrantfile
 
 # Kitchen Tests Local Mode Data
 kitchen-tests/nodes/*
+/lib/chef/#run_context.rb#
+/lib/chef/.#run_context.rb
+/lib/chef/#log.rb#
+/lib/chef/.#log.rb
+/lib/chef/policy_builder/#policyfile.rb#
+/lib/chef/policy_builder/.#policyfile.rb
+/lib/chef/#node.rb#
+/lib/chef/#shell.rb#
+/lib/chef/.#node.rb
+/lib/chef/.#shell.rb

@@ -1,4 +1,3 @@
-
 require 'chef/cookbook_version'
 require 'chef/cookbook/chefignore'
 require 'chef/cookbook/metadata'
@@ -99,12 +98,19 @@ class Chef
       alias :load_cookbooks :load
 
       def metadata_filenames
+        #Chef::Log.debug "going to load metadata for #{self}"
+        #p self
+        #Chef::Log.debug "considering filenames #{@metadata_filenames}"
         return @metadata_filenames unless @metadata_filenames.empty?
-        if File.exists?(File.join(cookbook_path, UPLOADED_COOKBOOK_VERSION_FILE))
-          @uploaded_cookbook_version_file = File.join(cookbook_path, UPLOADED_COOKBOOK_VERSION_FILE)
+
+        mpath = File.join(cookbook_path, UPLOADED_COOKBOOK_VERSION_FILE)
+        #Chef::Log.debug "going to check metadata for #{@mpath}"
+        if File.exists?(mpath)
+          @uploaded_cookbook_version_file = mpath
         end
 
         if File.exists?(File.join(cookbook_path, "metadata.rb"))
+#          Chef::Log.debug "going to load metadata for #{File.join(cookbook_path, "metadata.rb")}"
           @metadata_filenames << File.join(cookbook_path, "metadata.rb")
         elsif File.exists?(File.join(cookbook_path, "metadata.json"))
           @metadata_filenames << File.join(cookbook_path, "metadata.json")
@@ -114,6 +120,7 @@ class Chef
 
         # Set frozen based on .uploaded-cookbook-version.json
         set_frozen
+#        Chef::Log.debug "going to return metadata for #{@metadata_filenames}"
         @metadata_filenames
       end
 
@@ -133,6 +140,7 @@ class Chef
           c.metadata_filenames   = metadata_filenames
           c.metadata             = metadata
 
+          #Chef::Log.debug "cook book version #{c}"
           c.freeze_version if @frozen
         end
       end
@@ -151,8 +159,10 @@ class Chef
 
       # Generates the Cookbook::Metadata object
       def metadata
+#        Chef::Log.debug "in the metadata #{@metadata}"
         return @metadata unless @metadata.nil?
 
+#        Chef::Log.debug "create new metadata"
         @metadata = Chef::Cookbook::Metadata.new
 
         metadata_filenames.each do |metadata_file|
@@ -160,6 +170,7 @@ class Chef
           when /\.rb$/
             apply_ruby_metadata(metadata_file)
           when @uploaded_cookbook_version_file
+#            Chef::Log.debug "load from uploaded #{metadata_file}"
             apply_json_cookbook_version_metadata(metadata_file)
           when /\.json$/
             apply_json_metadata(metadata_file)
@@ -168,6 +179,7 @@ class Chef
           end
         end
 
+#       p "Return metadata @metadata:", @metadata
         @metadata
 
         # Rescue errors so that users can upload cookbooks via `knife cookbook
@@ -185,6 +197,8 @@ class Chef
         # Metadata won't be valid if the cookbook is empty. If the cookbook is
         # actually empty, a metadata error here would be misleading, so don't
         # raise it (if called by #load!, a different error is raised).
+#       p "check metadata"
+#       p metadata
         if !empty? && !metadata.valid?
           message = "Cookbook loaded at path(s) [#{@cookbook_paths.join(', ')}] has invalid metadata: #{metadata.errors.join('; ')}"
           raise Exceptions::MetadataNotValid, message
@@ -268,8 +282,11 @@ class Chef
 
       def apply_json_cookbook_version_metadata(file)
         begin
+#          Chef::Log.debug("going to read #{file}")
           data = Chef::JSONCompat.parse(IO.read(file))
+#          Chef::Log.debug("got data read #{data.inspect}")
           @metadata.from_hash(data['metadata'])
+#          Chef::Log.debug("got metadata #{@metadata.inspect}")
           # the JSON cookbok metadata file is only used by chef-zero.
           # The Chef Server API currently does not enforce that the metadata
           # have a `name` field, but that will cause an error when attempting

@@ -154,6 +154,7 @@ class Chef
     # @see Chef::RunContext::CookbookCompiler
     #
     def load(run_list_expansion)
+#      Chef::Log.debug("Load runlist expansion  #{run_list_expansion} ")
       @cookbook_compiler = CookbookCompiler.new(self, run_list_expansion, events)
       cookbook_compiler.compile
     end
