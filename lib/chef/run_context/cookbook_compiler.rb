@@ -249,6 +249,7 @@ class Chef
       # +seen_cookbooks+, otherwise it is added to the set of +seen_cookbooks+
       # before its dependencies are processed.
       def add_cookbook_with_deps(ordered_cookbooks, seen_cookbooks, cookbook)
+        Chef::Log.debug("add_cookbook_with_deps: #{cookbook}")
         return false if seen_cookbooks.key?(cookbook)
 
         seen_cookbooks[cookbook] = true
@@ -275,8 +276,10 @@ class Chef
       # +cookbook_name+ in lexical sort order.
       def each_cookbook_dep(cookbook_name, &block)
 #        p cookbook_collection
-#        p cookbook_name
+        #        p cookbook_name
+        Chef::Log.debug("Needs: #{cookbook_name}")
         cookbook = cookbook_collection[cookbook_name]
+        Chef::Log.debug("Cookbook #{cookbook_name} Has deps: #{cookbook.metadata.dependencies.keys}")
         cookbook.metadata.dependencies.keys.sort.map{|x| x.to_sym}.each(&block)
       end
 
