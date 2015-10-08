@@ -22,6 +22,8 @@ class Chef
     class TemplateFinder
 
       def initialize(run_context, cookbook_name, node)
+        Chef::Log.debug("init cookbook name '#{cookbook_name}'")
+        Chef::Log.debug("init cookbook node '#{node}'")
         @run_context = run_context
         @cookbook_name = cookbook_name
         @node = node
@@ -35,7 +37,12 @@ class Chef
         end
 
         cookbook_name = find_cookbook_name(options)
-        cookbook = @run_context.cookbook_collection[cookbook_name]
+        if !cookbook_name.nil?
+          # why do we need this?
+          Chef::Log.debug("looking for cookbook '#{cookbook_name}'")
+          cookbook = @run_context.cookbook_collection[cookbook_name]
+          Chef::Log.debug("looking for cookbook #{cookbook}")
+        end
 
         cookbook.preferred_filename_on_disk_location(@node, :templates, template_name)
       end

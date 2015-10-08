@@ -9,12 +9,18 @@ class Chef
     module Resources
       def self.add_resource_dsl(dsl_name)
         begin
-          module_eval(<<-EOM, __FILE__, __LINE__+1)
+          method = <<-EOM
             def #{dsl_name}(*args, &block)
               Chef.log_deprecation("Cannot create resource #{dsl_name} with more than one argument. All arguments except the name (\#{args[0].inspect}) will be ignored. This will cause an error in Chef 13. Arguments: \#{args}") if args.size > 1
               declare_resource(#{dsl_name.inspect}, args[0], caller[0], &block)
             end
           EOM
+          # TODO : mdupont : this is where methods are created
+          #puts method, __FILE__, __LINE__+1
+
+          #puts "Resources",caller
+          
+          module_eval(method, __FILE__, __LINE__+1)
         rescue SyntaxError
           # Handle the case where dsl_name has spaces, etc.
           define_method(dsl_name.to_sym) do |*args, &block|

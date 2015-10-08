@@ -54,9 +54,13 @@ class Chef
       # Cookbook::FileVendor to serve the contents of the manifest
       def self.create_from_manifest(manifest)
         if @vendor_class.nil?
-          raise "Must configure FileVendor to use a specific implementation before creating an instance"
+          require 'chef/cookbook/file_system_file_vendor'
+          Chef::Cookbook::FileSystemFileVendor.new(manifest, @initialization_options)
+          #raise "Must configure FileVendor to use a specific implementation before creating an instance"
+        else
+          @vendor_class.new(manifest, @initialization_options)
         end
-        @vendor_class.new(manifest, @initialization_options)
+
       end
 
       # Gets the on-disk location for the given cookbook file.

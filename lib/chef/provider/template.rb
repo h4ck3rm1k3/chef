@@ -43,7 +43,9 @@ class Chef
 
       def define_resource_requirements
         super
-
+        Chef::Log.debug("template_location '#{content}'")
+        pp content
+        Chef::Log.debug("template_location '#{content.template_location}'")
         requirements.assert(:create, :create_if_missing) do |a|
           a.assertion { ::File::exists?(content.template_location) }
           a.failure_message "Template source #{content.template_location} could not be found."

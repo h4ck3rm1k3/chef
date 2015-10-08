@@ -45,7 +45,11 @@ class Chef
       # file.
       def get_filename(filename)
         location = @repo_paths.inject(nil) do |memo, basepath|
-          candidate_location = File.join(basepath, @cookbook_name, filename)
+          if !basepath.nil?
+            candidate_location = File.join(basepath, @cookbook_name, filename)
+          else
+            candidate_location = File.join("./cookbooks/", @cookbook_name, filename)
+          end
           memo = candidate_location if File.exist?(candidate_location)
           memo
         end

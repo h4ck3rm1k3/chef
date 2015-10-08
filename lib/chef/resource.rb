@@ -1573,6 +1573,7 @@ class Chef
       if enclosing_provider && enclosing_provider.respond_to?(method_symbol)
         enclosing_provider.send(method_symbol, *args, &block)
       else
+        puts self.methods
         raise NoMethodError, "undefined method `#{method_symbol.to_s}' for #{self.class.to_s}"
       end
     end

@@ -330,6 +330,11 @@ class Chef
       if current_filepath && (manifest_record['checksum'] == self.class.checksum_cookbook_file(current_filepath))
         nil
       else
+        Chef::Log.debug("file_vendor '#{file_vendor}'")
+        pp file_vendor
+        Chef::Log.debug("manifest_record '#{manifest_record}'")
+        pp manifest_record
+
         file_vendor.get_filename(manifest_record['path'])
       end
     end

@@ -28,6 +28,8 @@ class Chef
         include Chef::Mixin::Template
 
         def template_location
+          Chef::Log.debug("new_resource '#{@new_resource}'")
+          pp @new_resource
           @template_file_cache_location ||= begin
             template_finder.find(@new_resource.source, :local => @new_resource.local, :cookbook => @new_resource.cookbook)
           end

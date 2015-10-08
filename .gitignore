@@ -53,3 +53,16 @@ kitchen-tests/nodes/*
 /lib/chef/#shell.rb#
 /lib/chef/.#node.rb
 /lib/chef/.#shell.rb
+/lib/chef/#provider.rb#
+/lib/chef/.#provider.rb
+/lib/chef/dsl/#recipe.rb#
+/lib/chef/dsl/.#recipe.rb
+/lib/chef/provider/#template_finder.rb#
+/lib/chef/provider/.#template_finder.rb
+/lib/chef/provider/package/#apt.rb#
+/lib/chef/provider/package/.#apt.rb
+/lib/chef/provider/template/#content.rb#
+/lib/chef/provider/template/.#content.rb
+/lib/chef/resource/trace.txt
+/spec/unit/provider/#execute_spec.rb#
+/spec/unit/provider/.#execute_spec.rb

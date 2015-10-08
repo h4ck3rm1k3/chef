@@ -71,7 +71,8 @@ class Chef
         end
       end
 
-      def action_install
+      def action_install(action)
+        puts "who cares about the action? #{action}"
         unless target_version_array.any?
           Chef::Log.debug("#{@new_resource} is already installed - nothing to do")
           return
@@ -339,6 +340,10 @@ class Chef
       #
       # @return [Array<String,NilClass>] array of package versions which need to be upgraded (nil = not being upgraded)
       def target_version_array
+        puts "target_version_array #{action}"
+        puts self.method(:action)
+        puts self.method(:action).source_location
+        
         @target_version_array ||=
           begin
             target_version_array = []
@@ -378,7 +383,7 @@ class Chef
 
               else
                 # in specs please test the public interface provider.run_action(:install) instead of provider.action_install
-                raise "internal error - target_version_array in package provider does not understand this action"
+                raise "internal error - target_version_array in package provider does not understand this action '#{action}'"
               end
             end
 
@@ -440,10 +445,13 @@ class Chef
       #
       # @yield [package_name, new_version, current_version, candidate_version] Description of block
       def each_package
+        puts "each_package package_name_array : #{package_name_array}"
         package_name_array.each_with_index do |package_name, i|
+          puts "each each_package Package : #{package_name}, I#{i}"
           candidate_version = candidate_version_array[i]
           current_version = current_version_array[i]
           new_version = new_version_array[i]
+          puts "each package_name #{package_name}, new_version #{new_version}, current_version #{current_version}, candidate_version #{candidate_version}"
           yield package_name, new_version, current_version, candidate_version
         end
       end
@@ -455,6 +463,7 @@ class Chef
 
       # @return [Array] package_name(s) as an array
       def package_name_array
+        puts "package_name_array : New resource #{new_resource} New resource.name #{new_resource.package_name}"
         [ new_resource.package_name ].flatten
       end
 
@@ -465,6 +474,7 @@ class Chef
 
       # @return [Array] current_version(s) as an array
       def current_version_array
+        puts "current_version_array : current_resource #{current_resource} , current_resource.version #{current_resource.version}"
         [ current_resource.version ].flatten
       end
 
