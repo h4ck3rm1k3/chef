@@ -58,6 +58,9 @@ class Chef
         end
 
         converge_by("execute #{description}") do
+          Chef::Log.debug("going to run #{command}")
+          Chef::Log.debug("going to run with #{opts}")
+          pp opts
           result = shell_out!(command, opts)
           Chef::Log.info("#{new_resource} ran successfully")
         end

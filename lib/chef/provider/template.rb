@@ -44,7 +44,7 @@ class Chef
       def define_resource_requirements
         super
         Chef::Log.debug("template_location '#{content}'")
-        pp content
+        #pp content this is HUGE
         Chef::Log.debug("template_location '#{content.template_location}'")
         requirements.assert(:create, :create_if_missing) do |a|
           a.assertion { ::File::exists?(content.template_location) }

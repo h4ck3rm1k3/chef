@@ -148,10 +148,12 @@ class Chef
         # If a definition exists, then Chef::DSL::Definitions.add_definition was
         # never called.  DEPRECATED.
         #
-        if run_context.definitions.has_key?(method_symbol.to_sym)
-          Chef.log_deprecation("Definition #{method_symbol} (#{run_context.definitions[method_symbol.to_sym]}) was added to the run_context without calling Chef::DSL::Definitions.add_definition(#{method_symbol.to_sym.inspect}).  This will become required in Chef 13.")
-          Chef::DSL::Definitions.add_definition(method_symbol)
-          return send(method_symbol, *args, &block)
+        if !run_context.nil?
+          if run_context.definitions.has_key?(method_symbol.to_sym)
+            Chef.log_deprecation("Definition #{method_symbol} (#{run_context.definitions[method_symbol.to_sym]}) was added to the run_context without calling Chef::DSL::Definitions.add_definition(#{method_symbol.to_sym.inspect}).  This will become required in Chef 13.")
+            Chef::DSL::Definitions.add_definition(method_symbol)
+            return send(method_symbol, *args, &block)
+          end
         end
 
         #
