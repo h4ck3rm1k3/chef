@@ -86,8 +86,8 @@ class Chef
         end
 
         def zypper_version
-          @zypper_version ||=
-            `zypper -V 2>&1`.scan(/\d+/).join(".").to_f
+          @zypper_version = 'whocares'
+            #`zypper -V 2>&1`.scan(/\d+/).join(".").to_f # https://github.com/opal/opal/issues/1524
         end
 
         def install_package(name, version)
